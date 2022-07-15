@@ -1,3 +1,5 @@
+const { checkValidUUID } = require("./functions");
+
 const express = require("express");
 const cors = require("cors");
 
@@ -21,15 +23,35 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  if (!user.pro && user.todos.length == 10)
+    return response.status(403).json({
+      error:
+        "Your plan has reached the maximum Tasks limit. Activate the Pro Plan to continue adding tasks to your list!",
+    });
+
+  next();
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+  const uuid = request.params.id;
+
+  console.log(checkValidUUID(uuid));
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const uuid = request.params.id;
+  const user = users.find((user) => user.id === uuid);
+
+  console.log(checkValidUUID(uuid));
+
+  if (!user) return response.status(404).json({ error: "User not found!" });
+
+  request.user = user;
+
+  return next();
 }
 
 app.post("/users", (request, response) => {
